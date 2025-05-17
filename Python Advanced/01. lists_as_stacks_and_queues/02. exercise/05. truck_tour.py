@@ -8,22 +8,21 @@ for _ in range(petrol_pumps):
     petrol, distance = int(data[0]), int(data[1])
     stations.append({'fuel': petrol, 'distance': distance})
 
-first_station = None
-gas_tank = 0
+changes = 0
 
-for i in range(petrol_pumps):
-    stopped = False
-    current_station = i
-    while current_station < petrol_pumps:
-        gas_tank += stations[current_station]['fuel']
-        dist = stations[current_station]['distance']
+while changes < petrol_pumps:
+    gas_tank = 0
+    for i in range(petrol_pumps):
+        gas_tank += stations[i]['fuel']
+        dist = stations[i]['distance']
         if dist > gas_tank:
-            stopped = True
+            changes += 1
+            stations.rotate(-1)
+            gas_tank -= dist
             break
         gas_tank -= dist
-        current_station += 1
-    if gas_tank >= 0 and not stopped:
-        first_station = i
+    if gas_tank >= 0:
+        first_station = changes
         break
 
-print(first_station)
+print(changes)
