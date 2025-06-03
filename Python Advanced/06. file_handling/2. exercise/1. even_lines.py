@@ -1,5 +1,5 @@
 import os
-path = os.path.join('..', 'ex_files', 'text.txt')
+path = os.path.join('..', 'ex_files', 'ex_1.txt')
 
 symbols = {"-", ",", ".", "!", "?"}
 with open(path) as f:
