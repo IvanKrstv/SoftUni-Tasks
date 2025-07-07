@@ -5,9 +5,9 @@ class Shop:
         self.capacity = capacity
         self.items: dict[str, int] = {} # {item_name: quantity}
 
-    @staticmethod
-    def small_shop(name: str, type: str):
-        return Shop(name, type, capacity=10)
+    @classmethod
+    def small_shop(cls, name: str, type: str):
+        return cls(name, type, capacity=10)
 
     def add_item(self, item_name: str):
         if sum(self.items.values()) == self.capacity:
