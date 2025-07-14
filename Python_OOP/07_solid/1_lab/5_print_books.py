@@ -9,7 +9,6 @@ class Formatter:
 
 
 class Printer:
-    def get_book(self, book: Book):
-        formatter = Formatter()
+    def get_book(self, book: Book, formatter: Formatter):
         formatted_book = formatter.format(book)
         return formatted_book
