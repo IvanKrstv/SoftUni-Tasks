@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 
@@ -30,21 +31,28 @@ class Order:
         """
         return sum(quantity * price for _, quantity, price in self.items)
 
-    def process_payment(self, payment_type: str) -> None:
-        """
-        Process the payment based on the payment type.
 
-        Args:
-        payment_type (str): The type of payment (e.g., 'credit_card', 'paypal').
-        """
-        total_amount = self.calculate_total()
+class PaymentMethod(ABC):
+    @abstractmethod
+    def pay(self, amount):
+        pass
 
-        if payment_type == 'credit_card':
-            print(f'Processing credit card payment for ${total_amount}')
-        elif payment_type == 'paypal':
-            print(f'Processing PayPal payment for ${total_amount}')
-        else:
-            print('Unsupported payment type.')
+class CreditCardPayment(PaymentMethod):
+    def pay(self, amount):
+        print(f'Processing credit card payment for ${amount}')
+
+class PayPalPayment(PaymentMethod):
+    def pay(self, amount):
+        print(f'Processing PayPal payment for ${amount}')
+
+
+class PaymentProcessor:
+    def __init__(self, payment_method: PaymentMethod):
+        self.payment_method = payment_method
+
+    def process_payment(self, order: Order):
+        total_amount = order.calculate_total()
+        self.payment_method.pay(total_amount)
 
 
 
@@ -53,4 +61,7 @@ order_obj = Order([
  ('Banana', 5, 0.5)
 ])
 
-order_obj.process_payment('credit_card')
+credit_card_payment = CreditCardPayment()
+payment_processor = PaymentProcessor(credit_card_payment)
+payment_processor.process_payment(order_obj)
+
