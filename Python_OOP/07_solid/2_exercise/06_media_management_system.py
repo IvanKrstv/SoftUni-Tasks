@@ -1,15 +1,22 @@
-class Media:
+from abc import abstractmethod, ABC
+
+
+class Borrowable(ABC):
+    @abstractmethod
     def borrow(self, user_id):
         pass
 
+class Readable(ABC):
+    @abstractmethod
     def read(self):
         pass
 
+class Listenable(ABC):
+    @abstractmethod
     def listen(self):
         pass
 
-
-class Book(Media):
+class Book(Borrowable, Readable):
     def __init__(self):
         self.borrowed = False
         self.progress = 0
@@ -25,11 +32,8 @@ class Book(Media):
         else:
             print("Book must be borrowed first.")
 
-    def listen(self):
-        pass
 
-
-class EBook(Media):
+class EBook(Borrowable, Readable):
     def __init__(self):
         self.borrowed = False
         self.drm_applied = False
@@ -47,11 +51,8 @@ class EBook(Media):
         else:
             print("eBook must be borrowed first.")
 
-    def listen(self):
-        pass
 
-
-class Audiobook(Media):
+class Audiobook(Borrowable, Listenable):
     def __init__(self):
         self.borrowed = False
         self.progress = 0
@@ -59,9 +60,6 @@ class Audiobook(Media):
     def borrow(self, user_id):
         self.borrowed = True
         print(f"Audiobook borrowed by user {user_id}.")
-
-    def read(self):
-        pass
 
     def listen(self):
         if self.borrowed:
@@ -74,14 +72,27 @@ class Audiobook(Media):
 book = Book()
 book.borrow("user123")
 book.read()
-book.listen()  # No effect, but must be present
+
+try:
+    book.listen()
+except AttributeError as e:
+    print(e)
 
 ebook = EBook()
 ebook.borrow("user456")
 ebook.read()
-ebook.listen()  # No effect, but must be present
+
+try:
+    ebook.listen()
+except AttributeError as e:
+    print(e)
 
 audiobook = Audiobook()
 audiobook.borrow("user789")
-audiobook.read()  # No effect, but must be present
 audiobook.listen()
+
+try:
+    audiobook.read()
+except AttributeError as e:
+    print(e)
+
