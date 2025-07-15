@@ -12,6 +12,16 @@ class NotificationSender(ABC):
     @abstractmethod
     def send(self, message: str):
         pass
+    
+    @property
+    def is_under_maintenance(self):
+        return self.__is_under_maintenance
+    
+    @is_under_maintenance.setter
+    def is_under_maintenance(self, value):
+        if not isinstance(value, bool):
+            raise TypeError("The value must be boolean")
+        self.__is_under_maintenance = value
 
 
 class EmailSender(NotificationSender):
@@ -26,32 +36,36 @@ class SMSSender(NotificationSender):
 
 class PushSender(NotificationSender):
     def send(self, message: str):
-        self.is_under_maintenance = True
-        raise UnderMaintenanceException('The Push Sender is under maintenance.')
+        print(f"Sending Push notification with message: {message}")
 
 
 class NotificationService:
-    def __init__(self, sender_type: str):
-        if sender_type == "email":
-            self.sender = EmailSender()
-        elif sender_type == "sms":
-            self.sender = SMSSender()
-        elif sender_type == "push":
-            self.sender = PushSender()
+    UNDER_MAINTENANCE = "This service is currently under maintenance."
+
+    def __init__(self, sender: NotificationSender):
+        self.sender = sender
 
     def notify(self, message: str):
-        self.sender.send(message)
+        if self.sender.is_under_maintenance:
+            print(self.UNDER_MAINTENANCE)
+        else:
+            self.sender.send(message)
 
 
-try:
-    email_service = NotificationService("email")
-    email_service.notify("Hello via email!")
+email_sender = EmailSender()
+sms_sender = SMSSender()
+push_sender = PushSender()
 
-    sms_service = NotificationService("sms")
-    sms_service.notify("Hello via SMS!")
+push_sender.is_under_maintenance = True
+"""
+The status change represents manual toggling done by an admin or a developer when they know a system component is under maintenance.
+In more complex systems, this would be automated or pulled from an external source.
+"""
+email_service = NotificationService(email_sender)
+sms_service = NotificationService(sms_sender)
+push_service = NotificationService(push_sender)
 
-    push_service = NotificationService("push")
-    push_service.notify("Hello via Push!")
+email_service.notify('Hello via email!')
+sms_service.notify('Hello via SMS!')
+push_service.notify('Hello via Push!')
 
-except UnderMaintenanceException as ex:
-    print(ex)
