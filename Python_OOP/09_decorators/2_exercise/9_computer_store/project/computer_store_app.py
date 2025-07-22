@@ -3,18 +3,16 @@ from project.computer_types.laptop import Laptop
 from project.computer_types.desktop_computer import DesktopComputer
 
 class ComputerStoreApp:
+    VALID_TYPES = {"Desktop Computer": DesktopComputer, "Laptop": Laptop}
+
     def __init__(self):
         self.warehouse: list[Computer] = []
         self.profits = 0
 
     def build_computer(self, type_computer: str, manufacturer: str, model: str, processor: str, ram: int):
-        VALID_TYPES = {"Desktop Computer", "Laptop"}
-        if type_computer not in VALID_TYPES:
+        if type_computer not in self.VALID_TYPES:
             raise ValueError(f"{type_computer} is not a valid type computer!")
-        if type_computer == 'Laptop':
-            computer = Laptop(manufacturer=manufacturer, model=model)
-        else:
-            computer = DesktopComputer(manufacturer=manufacturer, model=model)
+        computer = self.VALID_TYPES[type_computer](manufacturer=manufacturer, model=model)
 
         result = computer.configure_computer(processor=processor, ram=ram)
         self.warehouse.append(computer)
@@ -28,7 +26,7 @@ class ComputerStoreApp:
             raise Exception("Sorry, we don't have a computer for you.")
         self.warehouse.remove(computer)
         self.profits += client_budget - computer.price
-        return f"{computer} sold for {client_budget}$."
+        return f"{computer.__repr__()} sold for {client_budget}$."
 
 
 computer_store = ComputerStoreApp()
