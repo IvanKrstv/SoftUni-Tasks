@@ -1,5 +1,5 @@
 from unittest import TestCase, main
-from custom_list import CustomList
+from custom_list import CustomList, BoundImpossibleError
 
 
 class CustomListTests(TestCase):
@@ -224,6 +224,61 @@ class CustomListTests(TestCase):
 
         self.assertEqual([5, 1, 10], cl._CustomList__data)
         self.assertEqual([5, 1, 10], result)
+
+    def test_sum(self):
+        cl = CustomList(1, 10, "asd", [1, 2], 9.8)
+
+        result = cl.sum()
+
+        self.assertEqual(25.8, result)
+
+    def test_sum_zero_elements(self):
+        cl = CustomList()
+
+        result = cl.sum()
+        self.assertEqual(0, result)
+
+    def test_overbound_highest_number(self):
+        cl = CustomList(1, 10, "asd", [1, 2], 9.8)
+
+        result = cl.overbound()
+
+        self.assertEqual(1, result)
+
+    def test_overbound_highest_iterable(self):
+        cl = CustomList(1, 0.5, "asd", [1, 2], 2)
+
+        result = cl.overbound()
+
+        self.assertEqual(2, result)
+
+    def test_overbound_empty_list_raises(self):
+        cl = CustomList()
+
+        with self.assertRaises(BoundImpossibleError) as ex:
+            result = cl.overbound()
+        self.assertEqual("No elements in the list", str(ex.exception))
+
+    def test_underbound_lowest_number(self):
+        cl = CustomList(1, 10, "asd", [1, 2], 9.8)
+
+        result = cl.underbound()
+
+        self.assertEqual(0, result)
+
+    def test_underbound_lowest_iterable(self):
+        cl = CustomList(2, 3.5, "asd", [4], 22)
+
+        result = cl.underbound()
+
+        self.assertEqual(3, result)
+
+    def test_underbound_empty_list_raises(self):
+        cl = CustomList()
+
+        with self.assertRaises(BoundImpossibleError) as ex:
+            result = cl.underbound()
+        self.assertEqual("No elements in the list", str(ex.exception))
 
 
 if __name__ == '__main__':

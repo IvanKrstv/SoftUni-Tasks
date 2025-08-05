@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+class BoundImpossibleError(Exception):
+    pass
 
 class CustomList:
     def __init__(self, *args):
@@ -74,3 +76,50 @@ class CustomList:
         self.__data = second_part + first_part
 
         return self.__data
+
+    def sum(self):
+        sum = 0
+
+        for el in self.__data:
+            if isinstance(el, int) or isinstance(el, float):
+                sum += el
+            else:
+                sum += len(el)
+
+        return sum
+
+    def overbound(self):
+        if not self.__data:
+            raise BoundImpossibleError("No elements in the list")
+
+        highest_index = 0
+        max_num = float("-inf")
+
+        for index in range(len(self.__data)):
+            el = self.__data[index]
+            if not isinstance(el, int) and not isinstance(el, float):
+                el = len(self.__data[index])
+
+            if el > max_num:
+                highest_index = index
+                max_num = el
+
+        return highest_index
+
+    def underbound(self):
+        if not self.__data:
+            raise BoundImpossibleError("No elements in the list")
+
+        lowest_index = 0
+        min_num = float("inf")
+
+        for index in range(len(self.__data)):
+            el = self.__data[index]
+            if not isinstance(el, int) and not isinstance(el, float):
+                el = len(self.__data[index])
+
+            if el < min_num:
+                lowest_index = index
+                min_num = el
+
+        return lowest_index
